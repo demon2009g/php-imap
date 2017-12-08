@@ -228,7 +228,8 @@ class Mailbox {
 	public function getListingFolders($pattern = '*') {
 		$folders = $this->imap('list', [$this->imapPath, $pattern]) ?: [];
 		foreach($folders as &$folder) {
-			$folder = imap_utf7_decode($folder);
+			$folder = mb_convert_encoding($folder, "UTF-8", "UTF7-IMAP");
+			$folder = preg_replace("#^{imap\.[^}]+}#iu",'',$folder);
 		}
 		return $folders;
 	}
