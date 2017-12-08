@@ -46,7 +46,7 @@ echo "\n\nAttachments:\n";
 print_r($mail->getAttachments());
 ```
 
-### Example "Get messages in all Folders 10 minets ago"
+### Example "Get messages in all Folders for the current day"
 
 ```php
 // 4. argument is the directory into which attachments are to be saved:
@@ -59,7 +59,7 @@ foreach($mailbox->getListingFolders() as $folder){
 	$mailbox->switchMailbox($folder);
 
 	// Read all messaged into an array:
-	$mailsIds = $mailbox->searchMailbox('SINCE "'.date("d F Y",time()-10*60).'"');		
+	$mailsIds = $mailbox->searchMailbox('SINCE "'.date("d F Y").'"');	
 	rsort($mailsIds);
 
 	foreach($mailsIds as $k=>$id){
