@@ -50,7 +50,7 @@ print_r($mail->getAttachments());
 
 ```php
 // 4. argument is the directory into which attachments are to be saved:
-$mailbox = new PhpImap\Mailbox('{imap.yandex.ru:993/ssl/novalidate-cert/readonly}', "info@ve-zy.ru", "VezyVezy888", null);
+$mailbox = new PhpImap\Mailbox('{imap.yandex.ru:993/ssl/novalidate-cert/readonly}', "some@yandex.ru", "*********", null);
 
 foreach($mailbox->getListingFolders() as $folder){
 
