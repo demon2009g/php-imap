@@ -16,7 +16,7 @@
  
 ### Requirements
 
-* IMAP extension must be present; so make sure this line is active in your php.ini: `extension=php_imap.dll`
+* IMAP extension must be present; so make sure this line is active in your php.ini: `extension=php_imap.dll | extension=php_imap.so`
 
 ### Installation by Composer
 
@@ -44,6 +44,39 @@ $mail = $mailbox->getMail($mailsIds[0]);
 print_r($mail);
 echo "\n\nAttachments:\n";
 print_r($mail->getAttachments());
+```
+
+### Example "Get messages in all Folders 10 minets ago"
+
+```php
+// 4. argument is the directory into which attachments are to be saved:
+$mailbox = new PhpImap\Mailbox('{imap.yandex.ru:993/ssl/novalidate-cert/readonly}', "info@ve-zy.ru", "VezyVezy888", null);
+
+foreach($mailbox->getListingFolders() as $folder){
+
+	echo "<h1>{$folder}</h1><br/>";
+
+	$mailbox->switchMailbox($folder);
+
+	// Read all messaged into an array:
+	$mailsIds = $mailbox->searchMailbox('SINCE "'.date("d F Y",time()-10*60).'"');		
+	rsort($mailsIds);
+
+	foreach($mailsIds as $k=>$id){
+		$mail = $mailbox->getMail($id);
+		var_dump($mail->headers->toaddress);
+		var_dump($mail->headers->fromaddress);
+		var_dump($mail->headers->reply_toaddress);
+		var_dump($mail->headers->senderaddress);
+		var_dump($mail->fromName);
+		var_dump($mail->fromAddress);
+		var_dump($mail->subject);
+		echo($mail->textPlain);
+		echo($mail->textHtml);
+		echo "<hr/>";
+	}
+		
+}
 ```
 
 ### Recommended
