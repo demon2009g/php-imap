@@ -126,9 +126,9 @@ class Mailbox {
 		if(!$this->folders){
 			$this->getListingFolders();
 		}
-		if(in_array($imapPath,$this->folders)){	
-			$this->imapPath = array_search($imapPath,$this->folders);
-			$this->imap('reopen', $this->imapPath,false);
+		if(isset($this->folders[$imapPath])){			
+			$this->imapPath = $this->folders[$imapPath];
+			$this->imap('reopen', $this->imapPath);			
 		}else{
 			throw new Exception("Folder [{$imapPath}] does not exist");
 		}
@@ -239,11 +239,13 @@ class Mailbox {
 			$folders = $this->imap('list', [$this->imapPath,'*']) ?: [];
 			$nbps = iconv("cp1251","UTF-8",chr(160));
 			foreach($folders as &$folder) {
-				$folder = preg_replace("#^{imap\.[^}]+}#iu",'',$folder);				
-				$this->folders[$folder]=preg_replace("#{$nbps}#iu",' ',mb_convert_encoding($folder, "UTF-8", "UTF7-IMAP"));
+				$folder_ = mb_convert_encoding($folder, "UTF-8", "UTF7-IMAP");
+				$folder_ = preg_replace("#^{imap\.[^}]+}#iu",'',$folder_);				
+				$folder_ = preg_replace("#{$nbps}#iu",' ',$folder_);
+				$this->folders[$folder_]=$folder;
 			}
 		}
-		return array_values($this->folders);
+		return array_keys($this->folders);
 	}
 
 	/**
@@ -1128,9 +1130,11 @@ class Mailbox {
 		if(!is_array($args)) {
 			$args = [$args];
 		}
-		foreach($args as &$arg) {
-			if(is_string($arg)) {
-				$arg = imap_utf7_encode($arg);
+		if($methodShortName!=='reopen'){
+			foreach($args as &$arg) {
+				if(is_string($arg)) {
+					$arg = imap_utf7_encode($arg);
+				}
 			}
 		}
 		if($prependConnectionAsFirstArg) {
